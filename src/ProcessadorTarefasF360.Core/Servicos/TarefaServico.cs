@@ -38,6 +38,13 @@ public class TarefaServico : ITarefaServico
         return tarefa is null ? null : Mapear(tarefa);
     }
 
+    public async Task<List<TarefaResponse>> ObterTodasAsync()
+    {
+        var tarefas = await _repositorio.ObterTodasAsync();
+
+        return tarefas.Select(Mapear).ToList();
+    }
+
     private static TarefaResponse Mapear(TarefaProcessamento tarefa)
     {
         return new TarefaResponse

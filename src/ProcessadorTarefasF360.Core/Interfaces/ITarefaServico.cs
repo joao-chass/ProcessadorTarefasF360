@@ -6,4 +6,5 @@ public interface ITarefaServico
 {
     Task<TarefaResponse> CriarTarefaAsync(CriarTarefaRequest request);
     Task<TarefaResponse?> ObterPorIdAsync(string id);
+    Task<List<TarefaResponse>> ObterTodasAsync();
 }

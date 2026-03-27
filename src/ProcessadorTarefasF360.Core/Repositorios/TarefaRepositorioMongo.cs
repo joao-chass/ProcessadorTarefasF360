@@ -29,6 +29,14 @@ public class TarefaRepositorioMongo : IRepositorioTarefa
         return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<List<TarefaProcessamento>> ObterTodasAsync()
+    {
+        return await _collection
+            .Find(_ => true)
+            .SortByDescending(x => x.DataCriacao)
+            .ToListAsync();
+    }
+
     public async Task AtualizarAsync(TarefaProcessamento tarefa)
     {
         tarefa.DataAtualizacao = DateTime.UtcNow;

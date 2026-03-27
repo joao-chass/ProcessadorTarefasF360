@@ -28,6 +28,13 @@ public class TarefasController : ControllerBase
         return CreatedAtAction(nameof(ObterPorId), new { id = resposta.Id }, resposta);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ObterTodas()
+    {
+        var resposta = await _tarefaServico.ObterTodasAsync();
+        return Ok(resposta);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> ObterPorId(string id)
     {

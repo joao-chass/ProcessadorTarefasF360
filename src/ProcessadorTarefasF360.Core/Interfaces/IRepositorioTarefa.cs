@@ -6,6 +6,7 @@ public interface IRepositorioTarefa
 {
     Task<TarefaProcessamento> CriarAsync(TarefaProcessamento tarefa);
     Task<TarefaProcessamento?> ObterPorIdAsync(string id);
+    Task<List<TarefaProcessamento>> ObterTodasAsync();
     Task AtualizarAsync(TarefaProcessamento tarefa);
     Task<bool> TentarMarcarComoEmProcessamentoAsync(string id);
 }
