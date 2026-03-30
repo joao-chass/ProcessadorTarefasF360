@@ -10,7 +10,8 @@ public class TarefaProcessamento
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = string.Empty;
 
-    public string Descricao { get; set; } = string.Empty;
+    public TipoTarefa Tipo { get; set; }
+    public string DadosJson { get; set; } = "{}";
 
     public StatusTarefa Status { get; set; } = StatusTarefa.Pendente;
 

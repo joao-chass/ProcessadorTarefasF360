@@ -132,9 +132,39 @@ dotnet run --project src/ProcessadorTarefasF360.Worker
 POST /api/tarefas
 ```
 
+---
+
+# 📋 Tipo da tarefa
+
+| Tipo              | Valor |
+| ----------------- | ----- |
+| EnviarEmail       | 1     |
+| GerararRelatorio  | 2     |
+| ProcessarArquivo  | 3     |
+
+---
+
+Tipo envio de email: 
 ```json
 {
-  "descricao": "Processar arquivo"
+  "tipo": 1,
+  "dadosJson": "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}"
+}
+```
+
+Tipo gerarar relatorio: 
+```json
+{
+  "tipo": 2,
+  "dadosJson": "{\"titulo\":\"Relatório de Vendas\",\"geradoPor\":\"João\",\"formato\":\"PDF\",\"filtros\":\"status\":\"Pago\"}"
+}
+```
+
+Tipo processar arquivo: 
+```json
+{
+  "tipo": 3,
+  "dadosJson": "{\"nomeArquivo\":\"clientes_joao_2026.csv\",\"caminho\":\"/uploads/relatorios\",\"acao\":\"ProcessarArquivo\"}"
 }
 ```
 
@@ -153,6 +183,16 @@ GET /api/tarefas
 ```http
 GET /api/tarefas/{id}
 ```
+
+---
+
+# 📋 Tipo da tarefa
+
+| Tipo              | Valor |
+| ----------------- | ----- |
+| EnviarEmail       | 1     |
+| GerararRelatorio  | 2     |
+| ProcessarArquivo  | 3     |
 
 ---
 
@@ -214,11 +254,12 @@ curl http://localhost:8081/api/tarefas/{id}
 
 ```json
 {
-  "descricao": "erro"
+ "tipo": 2,
+"dadosJson": "{\"titulo\":\"teste erro\"}"
 }
 ```
 
-Resultado:
+Ao enviar um `dadosJson` contendo a string erro proposital, o resultado esperado será::
 
 * múltiplas tentativas
 * status final = Erro
@@ -247,6 +288,415 @@ Resultado:
 * API roda em HTTP (sem HTTPS no container)
 
 ---
+
+# 🐳 Comandos importantes Docker / Docker Compose
+
+Essa seção reúne os comandos mais úteis para subir, debugar e manter o ambiente do projeto.
+
+---
+
+## 🍎 Mac
+
+No terminal:
+
+```bash
+open -a Docker
+```
+
+Isso abre o Docker Desktop.
+
+Se quiser verificar se subiu corretamente:
+
+```bash
+docker ps
+```
+
+## 🪟 Windows
+
+CMD
+```bash
+start "" "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+```
+
+PowerShell
+```bash
+Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+```
+
+Depois teste:
+
+```bash
+docker ps
+```
+
+## 🚀 Subir o ambiente
+
+```bash
+docker compose up --build
+```
+
+### O que faz
+- sobe MongoDB
+- sobe RabbitMQ
+- sobe API
+- sobe Worker
+- recompila as imagens
+
+---
+
+## ⛔ Derrubar o ambiente
+
+```bash
+docker compose down
+```
+
+### O que faz
+- para todos os containers
+- remove a rede criada
+
+---
+
+## 🗑️ Derrubar e apagar volumes
+
+```bash
+docker compose down -v
+```
+
+### O que faz
+- remove containers
+- remove volumes
+- apaga os dados do MongoDB
+
+> 💡 Muito útil quando houver mudança no schema das entidades.
+
+---
+
+## 🔄 Rebuild completo
+
+```bash
+docker compose up --build --force-recreate
+```
+
+### Quando usar
+- alterações no Dockerfile
+- mudanças em dependências
+- problemas de cache
+
+---
+
+## 📋 Ver status dos containers
+
+```bash
+docker compose ps
+```
+
+Permite validar se:
+- API está online
+- Worker está online
+- RabbitMQ está online
+- MongoDB está online
+
+---
+
+## 📜 Ver logs de todos os serviços
+
+```bash
+docker compose logs -f
+```
+
+---
+
+## 📜 Ver logs apenas da API
+
+```bash
+docker compose logs -f api
+```
+
+Útil para:
+- erros HTTP
+- problemas no Swagger
+- exceções em controllers
+
+---
+
+## 📜 Ver logs apenas do Worker
+
+```bash
+docker compose logs -f worker
+```
+
+Esse é um dos comandos mais importantes do projeto.
+
+Permite acompanhar:
+- consumo da fila
+- retries
+- falhas
+- reenvio de tarefas
+- conclusão do processamento
+
+---
+
+## 📜 Ver logs do RabbitMQ
+
+```bash
+docker compose logs -f rabbitmq
+```
+
+---
+
+## 📜 Ver logs do MongoDB
+
+```bash
+docker compose logs -f mongodb
+```
+
+---
+
+## 🔁 Reiniciar apenas um serviço
+
+### Reiniciar Worker
+```bash
+docker compose restart worker
+```
+
+### Reiniciar API
+```bash
+docker compose restart api
+```
+
+---
+
+## 🏗️ Build individual da API
+
+```bash
+docker compose build api
+```
+
+---
+
+## 🏗️ Build individual do Worker
+
+```bash
+docker compose build worker
+```
+
+---
+
+## 🐚 Entrar no container da API
+
+```bash
+docker exec -it processadorf360-api sh
+```
+
+---
+
+## 🐚 Entrar no container do Worker
+
+```bash
+docker exec -it processadorf360-worker sh
+```
+
+---
+
+## 🐚 Entrar no MongoDB
+
+```bash
+docker exec -it processadorf360-mongodb mongosh
+```
+
+---
+
+# 🍃 MongoDB via Docker — acesso e comandos úteis
+
+Essa seção ajuda na validação manual, debugging e reset rápido do ambiente.
+
+---
+
+## 🐚 Acessar MongoDB dentro do container
+
+```bash
+docker exec -it processadorf360-mongodb mongosh
+```
+
+---
+
+## 🗄️ Selecionar o banco
+
+```javascript
+use ProcessadorTarefasF360Db
+```
+
+---
+
+## 📚 Listar collections
+
+```javascript
+show collections
+```
+
+---
+
+## 🔍 Buscar todas as tarefas
+
+```javascript
+db.tarefas.find().pretty()
+```
+
+👉 equivalente ao `SELECT *`
+
+---
+
+## 🔍 Buscar tarefa por ID
+
+```javascript
+db.tarefas.find({ _id: "SEU_ID" }).pretty()
+```
+
+---
+
+## 🔍 Buscar tarefas com erro
+
+```javascript
+db.tarefas.find({ Status: 3 }).pretty()
+```
+
+---
+
+## 🔍 Buscar tarefas pendentes
+
+```javascript
+db.tarefas.find({ Status: 0 }).pretty()
+```
+
+---
+
+## 🔍 Buscar tarefas por tipo
+
+```javascript
+db.tarefas.find({ Tipo: 1 }).pretty()
+```
+
+Exemplo:
+- `1` = EnviarEmail
+- `2` = GerarRelatorio
+- `3` = ProcessarArquivo
+
+---
+
+## 🔢 Contar tarefas
+
+```javascript
+db.tarefas.countDocuments()
+```
+
+---
+
+## ✏️ Atualizar status
+
+```javascript
+db.tarefas.updateOne(
+  { _id: "SEU_ID" },
+  { $set: { Status: 2 } }
+)
+```
+
+👉 marca como concluída
+
+---
+
+## ✏️ Atualizar tentativas
+
+```javascript
+db.tarefas.updateOne(
+  { _id: "SEU_ID" },
+  { $set: { Tentativas: 2 } }
+)
+```
+
+---
+
+## ➕ Incrementar tentativas
+
+```javascript
+db.tarefas.updateOne(
+  { _id: "SEU_ID" },
+  { $inc: { Tentativas: 1 } }
+)
+```
+
+---
+
+## 🗑️ Deletar uma tarefa
+
+```javascript
+db.tarefas.deleteOne({ _id: "SEU_ID" })
+```
+
+---
+
+## 🗑️ Deletar todas as tarefas
+
+```javascript
+db.tarefas.deleteMany({})
+```
+
+👉 ideal para reset rápido
+
+---
+
+## 💥 Dropar a collection
+
+```javascript
+db.tarefas.drop()
+```
+
+⚠️ remove dados + estrutura
+
+---
+
+## 💥 Dropar banco inteiro
+
+```javascript
+db.dropDatabase()
+```
+
+⚠️ remove tudo
+
+---
+
+## 🧪 Simular retry manualmente
+
+```javascript
+db.tarefas.updateOne(
+  { _id: "SEU_ID" },
+  {
+    $set: {
+      Status: 0,
+      Tentativas: 0,
+      MensagemErro: null
+    }
+  }
+)
+```
+
+👉 excelente para demonstração ao vivo
+
+---
+
+## 📋 Exemplo de documento salvo
+
+```json
+{
+  "_id": "123",
+  "Tipo": 1,
+  "DadosJson": "{\"destinatario\":\"teste@email.com\"}",
+  "Status": 0,
+  "Tentativas": 0,
+  "MaxTentativas": 3,
+  "DataCriacao": "2026-03-30T00:00:00Z"
+}
+```
+
 
 
 

@@ -23,13 +23,15 @@ public class TarefasControllerTests
     {
         var request = new CriarTarefaRequest
         {
-            Descricao = "Nova tarefa"
+            Tipo =  TipoTarefa.EnviarEmail,
+            DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Teste\"}"
         };
 
         var response = new TarefaResponse
         {
             Id = "123",
-            Descricao = "Nova tarefa",
+            Tipo = TipoTarefa.EnviarEmail,
+            DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Teste\"}",
             Status = StatusTarefa.Pendente,
             Tentativas = 0,
             MaxTentativas = 3
@@ -54,7 +56,8 @@ public class TarefasControllerTests
     {
         var request = new CriarTarefaRequest
         {
-            Descricao = ""
+            Tipo = 0,
+            DadosJson = "{}"
         };
 
         var resultado = await _controller.Criar(request);
@@ -68,7 +71,8 @@ public class TarefasControllerTests
         var response = new TarefaResponse
         {
             Id = "123",
-            Descricao = "Tarefa encontrada",
+            Tipo = TipoTarefa.GerararRelatorio,
+            DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}",
             Status = StatusTarefa.Concluida,
             Tentativas = 1,
             MaxTentativas = 3
@@ -106,7 +110,7 @@ public class TarefasControllerTests
             new()
             {
                 Id = "1",
-                Descricao = "Tarefa 1",
+                Tipo = TipoTarefa.GerararRelatorio,
                 Status = StatusTarefa.Pendente,
                 Tentativas = 0,
                 MaxTentativas = 3
@@ -114,7 +118,7 @@ public class TarefasControllerTests
             new()
             {
                 Id = "2",
-                Descricao = "Tarefa 2",
+                Tipo = TipoTarefa.EnviarEmail,
                 Status = StatusTarefa.Concluida,
                 Tentativas = 1,
                 MaxTentativas = 3

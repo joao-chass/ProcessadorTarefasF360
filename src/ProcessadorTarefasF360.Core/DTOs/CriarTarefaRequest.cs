@@ -1,6 +1,9 @@
+using ProcessadorTarefasF360.Core.Enums;
+
 namespace ProcessadorTarefasF360.Core.DTOs;
 
 public class CriarTarefaRequest
 {
-    public string Descricao { get; set; } = string.Empty;
+    public TipoTarefa Tipo { get; set; }
+    public string DadosJson { get; set; } = "{}";
 }

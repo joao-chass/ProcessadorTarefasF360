@@ -19,7 +19,8 @@ public class TarefaServico : ITarefaServico
     {
         var tarefa = new TarefaProcessamento
         {
-            Descricao = request.Descricao.Trim(),
+            Tipo = request.Tipo,
+            DadosJson = request.DadosJson,
             Tentativas = 0,
             MaxTentativas = 3
         };
@@ -50,7 +51,8 @@ public class TarefaServico : ITarefaServico
         return new TarefaResponse
         {
             Id = tarefa.Id,
-            Descricao = tarefa.Descricao,
+            Tipo = tarefa.Tipo,
+            DadosJson = tarefa.DadosJson,
             Status = tarefa.Status,
             Tentativas = tarefa.Tentativas,
             MaxTentativas = tarefa.MaxTentativas,

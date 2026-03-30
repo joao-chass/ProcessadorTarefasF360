@@ -39,7 +39,7 @@ public class ProcessadorTarefaServico : IProcessadorTarefaServico
 
         try
         {
-            if (tarefa.Descricao.Contains("erro", StringComparison.OrdinalIgnoreCase))
+            if (tarefa.DadosJson.Contains("erro", StringComparison.OrdinalIgnoreCase))
             {
                 throw new Exception("Falha simulada no processamento.");
             }

@@ -26,7 +26,8 @@ public class TarefaServicoTests
     {
         var request = new CriarTarefaRequest
         {
-            Descricao = "Processar arquivo"
+            Tipo = TipoTarefa.GerararRelatorio,
+            DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}"
         };
 
         _repositorioMock
@@ -41,7 +42,8 @@ public class TarefaServicoTests
 
         Assert.NotNull(resultado);
         Assert.Equal("123", resultado.Id);
-        Assert.Equal("Processar arquivo", resultado.Descricao);
+        Assert.Equal(TipoTarefa.GerararRelatorio, resultado.Tipo);
+        Assert.Equal("{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}", resultado.DadosJson);
         Assert.Equal(StatusTarefa.Pendente, resultado.Status);
         Assert.Equal(0, resultado.Tentativas);
         Assert.Equal(3, resultado.MaxTentativas);
@@ -56,7 +58,8 @@ public class TarefaServicoTests
         var tarefa = new TarefaProcessamento
         {
             Id = "123",
-            Descricao = "Tarefa teste",
+            Tipo = TipoTarefa.GerararRelatorio,
+            DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}",
             Status = StatusTarefa.Concluida,
             Tentativas = 1,
             MaxTentativas = 3
@@ -70,7 +73,8 @@ public class TarefaServicoTests
 
         Assert.NotNull(resultado);
         Assert.Equal("123", resultado!.Id);
-        Assert.Equal("Tarefa teste", resultado.Descricao);
+        Assert.Equal(TipoTarefa.GerararRelatorio, resultado.Tipo);
+        Assert.Equal("{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}", resultado.DadosJson);
         Assert.Equal(StatusTarefa.Concluida, resultado.Status);
     }
 
@@ -94,7 +98,8 @@ public class TarefaServicoTests
             new()
             {
                 Id = "1",
-                Descricao = "Tarefa 1",
+                Tipo = TipoTarefa.GerararRelatorio,
+                DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Bem-vindo\"}",
                 Status = StatusTarefa.Pendente,
                 Tentativas = 0,
                 MaxTentativas = 3
@@ -102,7 +107,8 @@ public class TarefaServicoTests
             new()
             {
                 Id = "2",
-                Descricao = "Tarefa 2",
+                Tipo = TipoTarefa.EnviarEmail,
+                DadosJson = "{\"destinatario\":\"teste@email.com\",\"assunto\":\"Teste\"}",
                 Status = StatusTarefa.Concluida,
                 Tentativas = 1,
                 MaxTentativas = 3

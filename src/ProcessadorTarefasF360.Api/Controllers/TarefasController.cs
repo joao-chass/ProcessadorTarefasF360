@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProcessadorTarefasF360.Core.DTOs;
+using ProcessadorTarefasF360.Core.Enums;
 using ProcessadorTarefasF360.Core.Interfaces;
 
 namespace ProcessadorTarefasF360.Api.Controllers;
@@ -18,9 +19,14 @@ public class TarefasController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] CriarTarefaRequest request)
     {
-        if (request is null || string.IsNullOrWhiteSpace(request.Descricao))
+        if (request is null)
         {
-            return BadRequest(new { mensagem = "A descrição da tarefa é obrigatória." });
+            return BadRequest(new { mensagem = "Request inválido." });
+        }
+
+        if (!Enum.IsDefined(typeof(TipoTarefa), request.Tipo))
+        {
+            return BadRequest(new { mensagem = "O tipo da tarefa é inválido." });
         }
 
         var resposta = await _tarefaServico.CriarTarefaAsync(request);
